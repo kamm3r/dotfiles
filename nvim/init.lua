@@ -1,1 +1,1 @@
-require("kammer")
+require("config")
