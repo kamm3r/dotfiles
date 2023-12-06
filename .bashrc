@@ -3,6 +3,7 @@
 # for examples
 
 TERM="xterm-256color"
+PATH="$PATH":"$HOME/.local/scripts/"
 
 # If not running interactively, don't do anything
 case $- in
@@ -36,7 +37,6 @@ fi
 
 # enable programmable completion features (you don't need to enable
 # this, if it's already enabled in /etc/bash.bashrc and /etc/profile
-# sources /etc/bash.bashrc).eval "$(starship init bash)"
 
 if ! shopt -oq posix; then
   if [ -f /usr/share/bash-completion/bash_completion ]; then
@@ -46,17 +46,20 @@ if ! shopt -oq posix; then
   fi
 fi
 
-# tmux Configuration
+# Autocomplete??
+bind "set show-all-if-ambiguous on"
+bind "TAB:menu-complete"
+
+# tmux configuation
 alias tmc="tmux source ~/.config/tmux/.tmux.conf"
-bindkey -s ^f "tmux-sessionizer\n"
+bind '"\C-f":"tmux-sessionizer\n"'
+
 
 # Starship Prompt
 eval "$(starship init bash)"
 
-# Autocomplete??
-# bind 'set show-all-if-ambiguous on'
-# bind 'TAB:menu-complete
-# . "$HOME/.cargo/env"
-# eval "$(/bin/brew shellenv)"
+# Homebrew
 eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+
+# fnm
 eval "$(fnm env --use-on-cd)"
