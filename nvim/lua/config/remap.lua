@@ -37,22 +37,22 @@ vim.keymap.set("n", "<leader>x", "<cmd>!chmod +x %<CR>", { silent = true })
 
 vim.keymap.set("n", "<leader>vpp", "<cmd>e ~/.config/nvim/lua/kammer/packer.lua<CR>");
 
-vim.keymap.set("n", "<leader><leader>", function ()
+vim.keymap.set("n", "<leader><leader>", function()
     vim.cmd("so")
 end)
 
-vim.keymap.set("n", "<C-t>", function ()
+vim.keymap.set("n", "<C-t>", function()
     vim.cmd("tabnew")
 end)
 
-vim.keymap.set("n", "<C-w>", function ()
+vim.keymap.set("n", "<C-w>", function()
     vim.cmd("tabclose")
 end)
 
-vim.keymap.set("n", "<C-r>", function ()
+vim.keymap.set("n", "<C-r>", function()
     vim.cmd("tabprevious")
 end)
 
-vim.keymap.set("n", "<C-i>", function ()
+vim.keymap.set("n", "<C-i>", function()
     vim.cmd("tabnext")
 end)
