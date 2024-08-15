@@ -1,10 +1,9 @@
 return {
     'tpope/vim-fugitive',
-
     config = function()
         vim.keymap.set("n", "<leader>gs", vim.cmd.Git)
 
-        local Kammer_fugitive = vim.api.nvim_create_augroup('Kammer_Fugitive', {})
+        local Kammer_Fugitive = vim.api.nvim_create_augroup('Kammer_Fugitive', {})
 
         local autocmd = vim.api.nvim_create_autocmd
         autocmd("BufWinEnter", {
@@ -31,5 +30,8 @@ return {
                 vim.keymap.set("n", "<leader>t", ":Git push -u origin ", opts);
             end,
         })
+
+        vim.keymap.set("n", "gu", "<cmd>diffget //2<CR>")
+        vim.keymap.set("n", "gh", "<cmd>diffget //3<CR>")
     end
 }

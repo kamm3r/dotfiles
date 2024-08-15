@@ -1,26 +1,23 @@
 return {
     'nvim-telescope/telescope.nvim',
-    branch = '0.1.x',
+    tag = '0.1.6',
     dependencies = {
-        'nvim-lua/plenary.nvim',
-        'BurntSushi/ripgrep',
-        -- Fuzzy Finder Algorithm which requires local dependencies to be built.
-        -- Only load if `make` is available. Make sure you have the system
-        -- requirements installed.
-        {
-            'nvim-telescope/telescope-fzf-native.nvim',
-            -- NOTE: If you are having trouble with this installation,
-            --       refer to the README for telescope-fzf-native for more instructions.
-            build = 'make',
-            cond = function()
-                return vim.fn.executable 'make' == 1
-            end,
-        },
+        'nvim-lua/plenary.nvim'
     },
     config = function()
+        require('telescope').setup({})
+
         local builtin = require('telescope.builtin')
         vim.keymap.set('n', '<leader>pf', builtin.find_files, {})
         vim.keymap.set('n', '<C-p>', builtin.git_files, {})
+        vim.keymap.set('n', '<leader>pws', function()
+            local word = vim.fn.expand("<cword>")
+            builtin.grep_string({ search = word })
+        end)
+        vim.keymap.set('n', '<leader>pWs', function()
+            local word = vim.fn.expand("<cWORD>")
+            builtin.grep_string({ search = word })
+        end)
         vim.keymap.set('n', '<leader>ps', function()
             builtin.grep_string({ search = vim.fn.input("Grep > ") })
         end)
