@@ -4,17 +4,32 @@ case $- in
     *) return;;
 esac
 
+# temporary workaround for https://github.com/systemd/systemd/issues/17095
+if uwsm check may-start && uwsm select; then
+    exec uwsm start default
+fi
+
 # You may need to manually set your language environment
 export LANG=en_US.UTF-8
-export LC_CTYPE=en_IE.UTF-8
-export LC_ALL=en_IE.UTF-8
+export LC_CTYPE=en_US.UTF-8
+export LC_NUMERIC="en_IE.UTF-8"
+export LC_TIME="en_IE.UTF-8"
+export LC_COLLATE="en_IE.UTF-8"
+export LC_MONETARY="en_IE.UTF-8"
+export LC_MESSAGES=en_US.UTF-8
+export LC_PAPER="en_IE.UTF-8"
+export LC_NAME="en_IE.UTF-8"
+export LC_ADDRESS="en_IE.UTF-8"
+export LC_TELEPHONE="en_IE.UTF-8"
+export LC_MEASUREMENT="en_IE.UTF-8"
+export LC_IDENTIFICATION="en_IE.UTF-8"
 
 # Other XDG paths
 export XDG_DATA_HOME=${XDG_DATA_HOME:="$HOME/.local/share"}
 export XDG_STATE_HOME=${XDG_STATE_HOME:="$HOME/.local/state"}
 export XDG_CACHE_HOME=${XDG_CACHE_HOME:="$HOME/.cache"}
 export XDG_CONFIG_HOME=${XDG_CONFIG_HOME:="$HOME/.config"}
-export XDG_PICTURES_DIR=${XDG_PICTURES_DIR:="$HOME/picures"}
+export XDG_PICTURES_DIR=${XDG_PICTURES_DIR:="$HOME/Pictures"}
 export HISTFILE="$XDG_STATE_HOME"/bash/history
 
 # Disable files
@@ -132,7 +147,6 @@ bind "TAB:menu-complete"
 alias tmc="tmux source ~/.config/tmux/.tmux.conf"
 bind '"\C-f":"tmux-sessionizer\n"'
 
-
 # Starship Prompt
 eval "$(starship init bash)"
 
@@ -148,3 +162,5 @@ eval "$(fzf --bash)"
 export GPG_TTY=$(tty)
 
 . "$HOME/.cargo/env"
+. "/home/shush/.deno/env"
+
