@@ -1,0 +1,15 @@
+#!/bin/sh
+
+
+MSG_FILE="$XDG_CACHE_HOME/hyprlock_message.txt"
+
+if [ $# -eq 0 ]; then
+    echo "Usage: set-lockscreen-message \"your message text\"" >&2
+    exit 1
+fi
+
+mkdir -p "$(dirname "$MSG_FILE")"
+echo "$*" > "$MSG_FILE"
+
+# If hyprlock is already running, tell it to update labels
+pkill -USR2 hyprlock 2>/dev/null || true

@@ -1,0 +1,37 @@
+#!/bin/sh
+dest="/tmp/hyprlock_battery.png"
+status="$(cat /sys/class/power_supply/BAT0/status)"
+level="$(cat /sys/class/power_supply/BAT0/capacity)"
+theme="$(gsettings get org.gnome.desktop.interface color-scheme | tr -d \' )"
+
+# Base directory containing both light/ and dark/ icon variants
+base="/home/bobross/.local/share/icons/Adwaita-temp"
+
+# Detect GNOME color scheme and pick subdirectory
+case "$theme" in
+    *"dark"*)  theme_dir="light" ;;
+    *"light"*) theme_dir="dark" ;;
+    *)
+        # Fallback to light if undefined
+        theme_dir="dark"
+        ;;
+esac
+
+# Round down battery level to nearest 10 (0 → 10 → 20 … 100)
+icon_level=$(( (level / 10) * 10 ))
+
+# Pick icon depending on charging state
+if [ "$status" = "Charging" ] || [ "$status" = "Not charging" ]; then
+    icon="$base/$theme_dir/battery-level-${icon_level}-charging-symbolic.png"
+else
+    icon="$base/$theme_dir/battery-level-${icon_level}-symbolic.png"
+fi
+
+# Fallback if icon doesn’t exist
+if [ ! -f "$icon" ]; then
+    icon="$base/$theme_dir/battery-missing-symbolic.png"
+fi
+
+# Copy to destination (for Hyprlock use)
+cp -f "$icon" "$dest"
+echo "$icon"

@@ -1,0 +1,52 @@
+#!/bin/sh
+dest="/tmp/hyprlock_network.png"
+base="/home/bobross/.local/share/icons/Adwaita-temp"
+theme="$(gsettings get org.gnome.desktop.interface color-scheme | tr -d \')"
+status="$(nmcli general status 2>/dev/null | grep -oh '\w*connect\w*')"
+
+case "$theme" in
+    *"dark"*)  theme_dir="light" ;;
+    *"light"*) theme_dir="dark" ;;
+    *)
+        # Fallback to light if undefined
+        theme_dir="dark"
+        ;;
+esac
+
+# ---- Detect Wi‑Fi strength if connected ----
+if [[ "$status" == "disconnected" ]]; then
+    icon="$base/$theme_dir/network-wireless-offline-symbolic.png"
+
+elif [[ "$status" == "connecting" ]]; then
+    icon="$base/$theme_dir/network-wireless-acquiring-symbolic.png"
+
+elif [[ "$status" == "connected" ]]; then
+    strength="$("$HOME/.config/hypr/hyprlock/scripts/wifi-conn-strength" 2>/dev/null)"
+    rc=$?
+
+    if [[ $rc -eq 0 && "$strength" =~ ^[0-9]+$ ]]; then
+        # clamp to 0–100
+        (( strength < 0 )) && strength=0
+        (( strength > 100 )) && strength=100
+
+        if   (( strength <= 0 ));  then
+            icon="$base/$theme_dir/network-wireless-signal-none-symbolic.png"
+        elif (( strength <= 25 )); then
+            icon="$base/$theme_dir/network-wireless-signal-weak-symbolic.png"
+        elif (( strength <= 50 )); then
+            icon="$base/$theme_dir/network-wireless-signal-ok-symbolic.png"
+        elif (( strength <= 75 )); then
+            icon="$base/$theme_dir/network-wireless-signal-good-symbolic.png"
+        else
+            icon="$base/$theme_dir/network-wireless-signal-excellent-symbolic.png"
+        fi
+    else
+        icon="$base/$theme_dir/network-wired-symbolic.png"
+    fi
+else
+    icon="$base/$theme_dir/network-wireless-offline-symbolic.png"
+fi
+
+cp -f "$icon" "$dest"
+
+echo "$icon"

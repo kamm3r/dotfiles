@@ -1,0 +1,27 @@
+#!/bin/sh
+
+# Directory containing wallpapers
+WALLPAPER_DIR="$HOME/Pictures/Wallpapers"
+
+# Hyprpaper config file
+CONFIG_FILE="$HOME/.config/hypr/hyprpaper.conf"
+
+# Clear old config
+echo "# Auto-generated hyprpaper config" > "$CONFIG_FILE"
+
+# Preload all images in the directory
+for img in "$WALLPAPER_DIR"/*.{png,jpg,jpeg}; do
+    # Check if file exists (in case no matches)
+    [ -e "$img" ] || continue
+    echo "preload = $img" >> "$CONFIG_FILE"
+done
+
+# Optionally set the first image as wallpaper for all monitors
+FIRST_IMG=$(ls "$WALLPAPER_DIR"/*.{png,jpg,jpeg} 2>/dev/null | head -n 1)
+if [ -n "$FIRST_IMG" ]; then
+    for monitor in $(hyprctl monitors -j | jq -r '.[].name'); do
+        echo "wallpaper = $monitor,$FIRST_IMG" >> "$CONFIG_FILE"
+    done
+fi
+
+echo "Hyprpaper config generated at $CONFIG_FILE"

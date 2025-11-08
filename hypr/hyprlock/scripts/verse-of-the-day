@@ -1,0 +1,22 @@
+#!/bin/sh
+export BIBLECLI="/home/bobross/bin/bible/dbs"
+BIBLE="/home/bobross/bin/bible/bin/bible"
+
+VERSE_REF="2 Timothy 4:7"
+TRANSLATION=NLT
+
+
+# Grab verse text, drop first line if it only contains the reference
+RAW=$($BIBLE "$VERSE_REF" TRANSLATION="$TRANSLATION" 2>/dev/null)
+
+# Keep all lines except the first that starts with the verse reference
+BODY=$(echo "$RAW" | awk -v ref="$VERSE_REF" 'NR==1 && $0 ~ ref {next} {print}')
+
+# Trim leading/trailing spaces and blank lines
+CLEAN=$(echo "$BODY" | sed '/^$/d' | sed 's/^ *//;s/ *$//')
+
+# Final pretty output
+printf "%s\n\n— %s (%s)\n" \
+"$CLEAN" \
+"$VERSE_REF" \
+"$TRANSLATION"

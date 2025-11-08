@@ -1,0 +1,27 @@
+#!/bin/sh
+# Returns Wi‑Fi signal strength (0–100)
+# Exit 0 on success, 1 if not Wi‑Fi, 2 if failed to read signal.
+
+# Find the active Wi‑Fi interface
+iface="$(nmcli -t -f DEVICE,TYPE,STATE dev status | awk -F: '$2=="wifi" && $3=="connected"{print $1; exit}')"
+
+if [ -z "$iface" ]; then
+    echo "Primary connection is not Wi-Fi"
+    exit 1
+fi
+
+# Extract the signal strength for that interface
+strength="$(nmcli -t -f DEVICE,SIGNAL dev wifi list 2>/dev/null | awk -F: -v dev="$iface" '$1==dev {print $2; exit}')"
+
+# Fallback if nothing found
+if [ -z "$strength" ]; then
+    strength="$(nmcli -t -f IN-USE,DEVICE,SIGNAL dev wifi 2>/dev/null | awk -F: '$1=="*"{print $3; exit}')"
+fi
+
+if [ -z "$strength" ]; then
+    echo "Failed to get connection strength"
+    exit 2
+fi
+
+echo "$strength"
+exit 0
